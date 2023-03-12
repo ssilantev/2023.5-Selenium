@@ -45,8 +45,6 @@ public class FormTests {
         String nameLabelText = nameLabel.getText();
         Assertions.assertEquals("Name", nameLabelText);
 
-
-
     }
 
     @AfterEach
