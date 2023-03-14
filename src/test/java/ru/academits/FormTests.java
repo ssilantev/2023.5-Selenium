@@ -42,7 +42,7 @@ public class FormTests {
         driver.findElement(By.cssSelector("#firstName")).sendKeys(TestData.name);
         driver.findElement(By.cssSelector("#lastName")).sendKeys(TestData.lastName);
         driver.findElement(By.cssSelector("#userNumber")).sendKeys(TestData.phone);
-        driver.findElement(By.cssSelector("[for='gender-radio-1']")).click();
+        driver.findElement(By.xpath("//label[contains(text(),'Male')]")).click();
     }
 
     @Test
@@ -61,55 +61,88 @@ public class FormTests {
         String studentName = driver.findElement(By.xpath("//*//tbody/tr[1]/td[2]")).getText();
         Assertions.assertEquals(TestData.name + " " + TestData.lastName, studentName);
 
-        String gender = driver.findElement(By.xpath("//*//tbody/tr[3]/td[2]")).getText();
+        String gender = driver.findElement(By.xpath("//td[contains(text(),'Gender')]/following::td[1]")).getText();
         Assertions.assertEquals("Male", gender);
 
-        String mobile = driver.findElement(By.xpath("//*//tbody/tr[4]/td[2]")).getText();
+        String mobile = driver.findElement(By.xpath("//td[contains(text(),'Mobile')]/following::td[1]")).getText();
         Assertions.assertEquals(TestData.phone, mobile);
     }
 
     @Test
     public void phoneWrongTest() throws InterruptedException {
         driver.findElement(By.cssSelector("#userNumber")).clear();
-        driver.findElement(By.cssSelector("#userNumber")).sendKeys(TestData.phoneWrong);//false
+        driver.findElement(By.cssSelector("#userNumber")).sendKeys(TestData.phoneWrong);
         driver.findElement(By.cssSelector("#submit")).click();
-        String locator = "\"[role='dialog']\"";
         TimeUnit.SECONDS.sleep(1);
-        Assertions.assertTrue(!Methods.searchElement(driver, locator));//dialog not opened ifphone is wrong
+        Assertions.assertFalse(Methods.searchElement(driver));
+    }
+
+    @Test
+    public void eMailTest() {
+        driver.findElement(By.cssSelector("#userEmail")).sendKeys(TestData.eMail);
+        driver.findElement(By.cssSelector("#submit")).click();
+        String mail = driver.findElement(By.xpath("//td[contains(text(),'Student Email')]/following::td[1]")).getText();
+        Assertions.assertEquals(TestData.eMail, mail);
+    }
+
+    @Test
+    public void eMailWrongTest() throws InterruptedException {
+        driver.findElement(By.cssSelector("#userEmail")).sendKeys(TestData.eMailWrong);
+        driver.findElement(By.cssSelector("#submit")).click();
+        TimeUnit.SECONDS.sleep(1);
+        Assertions.assertFalse(Methods.searchElement(driver));
     }
 
     @Test
     public void maleRadioTest() {
         driver.findElement(By.cssSelector("#submit")).click();
-        String gender = driver.findElement(By.xpath("//*//tbody/tr[3]/td[2]")).getText();
+        String gender = driver.findElement(By.xpath("//td[contains(text(),'Gender')]/following::td[1]")).getText();
         Assertions.assertEquals("Male", gender);
+
     }
     @Test
     public void femaleRadioTest() {
-        driver.findElement(By.cssSelector("[for='gender-radio-2']")).click();
+        driver.findElement(By.xpath("//label[contains(text(),'Female')]")).click();
         driver.findElement(By.cssSelector("#submit")).click();
-        String gender = driver.findElement(By.xpath("//*//tbody/tr[3]/td[2]")).getText();
+        String gender = driver.findElement(By.xpath("//td[contains(text(),'Gender')]/following::td[1]")).getText();
         Assertions.assertEquals("Female", gender);
     }
 
     @Test
     public void otherGenderRadioTest() {
-        driver.findElement(By.cssSelector("[for='gender-radio-3']")).click();
+        driver.findElement(By.xpath("//label[contains(text(),'Other')]")).click();
         driver.findElement(By.cssSelector("#submit")).click();
-        String gender = driver.findElement(By.xpath("//*//tbody/tr[3]/td[2]")).getText();
+        String gender = driver.findElement(By.xpath("//td[contains(text(),'Gender')]/following::td[1]")).getText();
         Assertions.assertEquals("Other", gender);
     }
 
     @Test
     public void checkboxesTest() {
-        driver.findElement(By.cssSelector("[for='hobbies-checkbox-1']")).click();
-        driver.findElement(By.cssSelector("[for='hobbies-checkbox-2']")).click();
-        driver.findElement(By.cssSelector("[for='hobbies-checkbox-3']")).click();
+        driver.findElement(By.xpath("//label[contains(text(),'Sports')]")).click();
+        driver.findElement(By.xpath("//label[contains(text(),'Reading')]")).click();
+        driver.findElement(By.xpath("//label[contains(text(),'Music')]")).click();
 
         driver.findElement(By.cssSelector("#submit")).click();
-        String hobbies = driver.findElement(By.xpath("//*//tbody/tr[7]/td[2]")).getText();
+        String hobbies = driver.findElement(By.xpath("//td[contains(text(),'Hobbies')]/following::td[1]")).getText();
         Assertions.assertEquals("Sports, Reading, Music", hobbies);
     }
+
+    @Test //Этот тест должен всегда падать из-за бага в форме - в диалоге нет строки Subjects
+    public void subjectsTest() {
+        driver.findElement(By.cssSelector("#subjectsInput")).sendKeys(TestData.inputText);
+        driver.findElement(By.cssSelector("#submit")).click();
+        String subjects = driver.findElement(By.xpath("//td[contains(text(),'Subjects')]/following::td[1]")).getText();
+        Assertions.assertEquals(TestData.inputText, subjects);
+    }
+
+    @Test
+    public void addressTest() {
+        driver.findElement(By.cssSelector("#currentAddress")).sendKeys(TestData.inputText);
+        driver.findElement(By.cssSelector("#submit")).click();
+        String address = driver.findElement(By.xpath("//td[contains(text(),'Address')]/following::td[1]")).getText();
+        Assertions.assertEquals(TestData.inputText, address);
+    }
+
 
 
     @AfterEach

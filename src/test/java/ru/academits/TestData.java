@@ -5,7 +5,11 @@ public class TestData {
 		static String lastName = "Ivanov";
 		static String phone = "1234567890";
 		static String phoneWrong = "qwertyuiop";
-		static String mail = "name@server.domen";
-		static String mailWrong = "nameServerDomen";
+		static String eMail = "name@server.domen";
+		static String eMailWrong = "nameServerDomen";
+		static String inputText = "aA1 ,.@()";
+
+		static String dialogLocator = "[role='dialog']";
 
 }
+ 

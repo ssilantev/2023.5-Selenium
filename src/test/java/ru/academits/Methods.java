@@ -5,13 +5,12 @@ import org.openqa.selenium.WebDriver;
 
 public class Methods {
 
-    public static boolean searchElement(WebDriver driver, String locator) {
-
+    public static boolean searchElement(WebDriver driver) {
         try {
-            driver.findElement(By.cssSelector(locator));
-            return true;
-        } catch (org.openqa.selenium.NoSuchElementException e) {
-            return false;
+            driver.findElement(By.cssSelector(TestData.dialogLocator));
+                return true;
+            } catch (org.openqa.selenium.NoSuchElementException e) {
+                return false;
         }
     }
 }
