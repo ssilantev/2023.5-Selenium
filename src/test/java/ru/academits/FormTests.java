@@ -3,11 +3,17 @@ package ru.academits;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class FormTests {
@@ -142,6 +148,38 @@ public class FormTests {
         String address = driver.findElement(By.xpath("//td[contains(text(),'Address')]/following::td[1]")).getText();
         Assertions.assertEquals(TestData.inputText, address);
     }
+
+    @Test
+    public void addFileTest() {
+        File myFile = new File(TestData.filePath);
+        String path = myFile.getAbsolutePath();
+        String fileName = myFile.getName();
+        driver.findElement(By.cssSelector("#uploadPicture")).sendKeys(path);
+        driver.findElement(By.cssSelector("#submit")).click();
+        String observedName = driver.findElement(By.xpath("//td[contains(text(),'Picture')]/following::td[1]")).getText();
+        Assertions.assertEquals(fileName, observedName);
+    }
+
+    @Test
+    public void cityDisabledTest() {
+        Assertions.assertFalse(driver.findElement(By.cssSelector("#react-select-4-input")).isEnabled());
+    }
+
+    @Test
+    public void countryListTest() {
+        driver.findElement(By.xpath("//*[@focusable='false'][1]")).click();
+        driver.findElement(By.xpath("//*[@class='css-2613qy-menu']")).click();
+
+
+
+//        WebElement stateList = driver.findElement(By.cssSelector("[#state]"));
+//        List<WebElement> list = stateList.findElement(By.cssSelector("input")).get;
+//
+//        Assertions.assertFalse(driver.findElement(By.cssSelector("#react-select-4-input")).isEnabled());
+//
+//        for (WebElement input: inputs) {
+//            System.out.println((input.getAttribute()));
+        }
 
 
 

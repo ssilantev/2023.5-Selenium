@@ -8,8 +8,8 @@ public class TestData {
 		static String eMail = "name@server.domen";
 		static String eMailWrong = "nameServerDomen";
 		static String inputText = "aA1 ,.@()";
+		static String filePath = "src\\test\\java\\ru\\academits\\tail.png";
 
 		static String dialogLocator = "[role='dialog']";
 
 }
- 
