@@ -9,11 +9,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class FormTests {
@@ -24,19 +22,15 @@ public class FormTests {
 
         String browser = System.getProperty("browser");
 
-        switch (browser) {
-            case "chrome":
-                WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
-                break;
-            case "edge":
-                WebDriverManager.edgedriver().setup();
-                driver = new EdgeDriver();
-                break;
-            case "firefox":
-                WebDriverManager.firefoxdriver().setup();
-                driver = new FirefoxDriver();
-                break;
+        if (browser.equals("chrome")) {
+            WebDriverManager.chromedriver().setup();
+            driver = new ChromeDriver();
+        } else if (browser.equals("edge")) {
+            WebDriverManager.edgedriver().setup();
+            driver = new EdgeDriver();
+        } else if (browser.equals("firefox")) {
+            WebDriverManager.firefoxdriver().setup();
+            driver = new FirefoxDriver();
         }
         driver.get("https://demoqa.com/automation-practice-form");
         driver.manage().window().maximize();
@@ -75,11 +69,10 @@ public class FormTests {
     }
 
     @Test
-    public void phoneWrongTest() throws InterruptedException {
+    public void phoneWrongTest() {
         driver.findElement(By.cssSelector("#userNumber")).clear();
         driver.findElement(By.cssSelector("#userNumber")).sendKeys(TestData.phoneWrong);
         driver.findElement(By.cssSelector("#submit")).click();
-        TimeUnit.SECONDS.sleep(1);
         Assertions.assertFalse(Methods.searchElement(driver));
     }
 
@@ -92,10 +85,9 @@ public class FormTests {
     }
 
     @Test
-    public void eMailWrongTest() throws InterruptedException {
+    public void eMailWrongTest() {
         driver.findElement(By.cssSelector("#userEmail")).sendKeys(TestData.eMailWrong);
         driver.findElement(By.cssSelector("#submit")).click();
-        TimeUnit.SECONDS.sleep(1);
         Assertions.assertFalse(Methods.searchElement(driver));
     }
 
@@ -160,28 +152,53 @@ public class FormTests {
         Assertions.assertEquals(fileName, observedName);
     }
 
+
     @Test
-    public void cityDisabledTest() {
-        Assertions.assertFalse(driver.findElement(By.cssSelector("#react-select-4-input")).isEnabled());
+    public void enablingCityListTest() {
+        Assertions.assertFalse(driver.findElement(By.xpath("//*[@id='city']//input")).isEnabled());
+        driver.findElement(By.xpath("//*[@id='state']//input")).sendKeys(TestData.state1);
+        driver.findElement(By.xpath("//*[@id='state']//input")).sendKeys(Keys.TAB);
+        Assertions.assertTrue(driver.findElement(By.xpath("//*[@id='city']//input")).isEnabled());
     }
 
     @Test
-    public void countryListTest() {
-        driver.findElement(By.xpath("//*[@focusable='false'][1]")).click();
-        driver.findElement(By.xpath("//*[@class='css-2613qy-menu']")).click();
+    public void setStateCityTest() {
+        driver.findElement(By.xpath("//*[@id='state']//input")).sendKeys(TestData.state1);
+        driver.findElement(By.xpath("//*[@id='state']//input")).sendKeys(Keys.TAB);
+        driver.findElement(By.xpath("//*[@id='city']//input")).sendKeys(TestData.city11);
+        driver.findElement(By.xpath("//*[@id='city']//input")).sendKeys(Keys.RETURN);
+        driver.findElement(By.cssSelector("#submit")).sendKeys(Keys.RETURN);
+        String observedStateCity = driver
+                .findElement(By.xpath("//td[contains(text(),'State and City')]/following::td[1]"))
+                .getText();
+        Assertions.assertEquals(TestData.state1 + " " + TestData.city11, observedStateCity);
+    }
 
+    @Test
+    public void calendarTodayTest() {
+        String observedDate = driver.findElement(By.cssSelector("#dateOfBirthInput")).getAttribute("value");
+        Assertions.assertEquals(Methods.currentDate(), observedDate);
+    }
 
+    @Test
+    public void setNewDateTest() {
+        driver.findElement(By.cssSelector("#dateOfBirthInput")).click();
 
-//        WebElement stateList = driver.findElement(By.cssSelector("[#state]"));
-//        List<WebElement> list = stateList.findElement(By.cssSelector("input")).get;
-//
-//        Assertions.assertFalse(driver.findElement(By.cssSelector("#react-select-4-input")).isEnabled());
-//
-//        for (WebElement input: inputs) {
-//            System.out.println((input.getAttribute()));
-        }
+        WebElement elemYear = driver.findElement(By.xpath("//*[@class='react-datepicker__year-select']"));
+        Select selectY = new Select(elemYear);
+        selectY.selectByVisibleText(TestData.newYear);
 
+        WebElement elemMonth = driver.findElement(By.xpath("//*[@class='react-datepicker__month-select']"));
+            Select selectM = new Select(elemMonth);
+            selectM.selectByVisibleText(TestData.newMonth);
+            System.out.println(Methods.combineXpath());
 
+        driver.findElement(By.xpath(Methods.combineXpath())).click();
+
+        driver.findElement(By.cssSelector("#submit")).click();
+        String observedDate = driver.findElement(By.xpath("//td[contains(text(),'Date of Birth')]/following::td[1]")).getText();
+        Assertions.assertEquals(TestData.newDay + " "+ TestData.newMonth + "," + TestData.newYear, observedDate);
+    }
 
     @AfterEach
     public void tearDown() throws InterruptedException {
