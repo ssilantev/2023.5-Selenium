@@ -9,6 +9,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 
 import java.io.File;
@@ -56,6 +57,7 @@ public class FormTests {
     public void minRegistrationTest() {
         driver.findElement(By.cssSelector("#submit")).isDisplayed();
         driver.findElement(By.cssSelector("#submit")).click();
+        Assertions.assertTrue(Methods.waitDialog(driver));
 
         driver.findElement(By.cssSelector("[role='dialog']")).isDisplayed();
         String studentName = driver.findElement(By.xpath("//*//tbody/tr[1]/td[2]")).getText();
@@ -73,7 +75,7 @@ public class FormTests {
         driver.findElement(By.cssSelector("#userNumber")).clear();
         driver.findElement(By.cssSelector("#userNumber")).sendKeys(TestData.phoneWrong);
         driver.findElement(By.cssSelector("#submit")).click();
-        Assertions.assertFalse(Methods.searchElement(driver));
+        Assertions.assertFalse(Methods.waitDialog(driver));
     }
 
     @Test
@@ -88,20 +90,23 @@ public class FormTests {
     public void eMailWrongTest() {
         driver.findElement(By.cssSelector("#userEmail")).sendKeys(TestData.eMailWrong);
         driver.findElement(By.cssSelector("#submit")).click();
-        Assertions.assertFalse(Methods.searchElement(driver));
+        Assertions.assertFalse(Methods.waitDialog(driver));
     }
 
     @Test
     public void maleRadioTest() {
         driver.findElement(By.cssSelector("#submit")).click();
+        Assertions.assertTrue(Methods.waitDialog(driver));
         String gender = driver.findElement(By.xpath("//td[contains(text(),'Gender')]/following::td[1]")).getText();
         Assertions.assertEquals("Male", gender);
 
     }
+
     @Test
     public void femaleRadioTest() {
         driver.findElement(By.xpath("//label[contains(text(),'Female')]")).click();
         driver.findElement(By.cssSelector("#submit")).click();
+        Assertions.assertTrue(Methods.waitDialog(driver));
         String gender = driver.findElement(By.xpath("//td[contains(text(),'Gender')]/following::td[1]")).getText();
         Assertions.assertEquals("Female", gender);
     }
@@ -110,6 +115,7 @@ public class FormTests {
     public void otherGenderRadioTest() {
         driver.findElement(By.xpath("//label[contains(text(),'Other')]")).click();
         driver.findElement(By.cssSelector("#submit")).click();
+        Assertions.assertTrue(Methods.waitDialog(driver));
         String gender = driver.findElement(By.xpath("//td[contains(text(),'Gender')]/following::td[1]")).getText();
         Assertions.assertEquals("Other", gender);
     }
@@ -121,6 +127,7 @@ public class FormTests {
         driver.findElement(By.xpath("//label[contains(text(),'Music')]")).click();
 
         driver.findElement(By.cssSelector("#submit")).click();
+        Assertions.assertTrue(Methods.waitDialog(driver));
         String hobbies = driver.findElement(By.xpath("//td[contains(text(),'Hobbies')]/following::td[1]")).getText();
         Assertions.assertEquals("Sports, Reading, Music", hobbies);
     }
@@ -129,6 +136,7 @@ public class FormTests {
     public void subjectsTest() {
         driver.findElement(By.cssSelector("#subjectsInput")).sendKeys(TestData.inputText);
         driver.findElement(By.cssSelector("#submit")).click();
+        Assertions.assertTrue(Methods.waitDialog(driver));
         String subjects = driver.findElement(By.xpath("//td[contains(text(),'Subjects')]/following::td[1]")).getText();
         Assertions.assertEquals(TestData.inputText, subjects);
     }
@@ -137,6 +145,7 @@ public class FormTests {
     public void addressTest() {
         driver.findElement(By.cssSelector("#currentAddress")).sendKeys(TestData.inputText);
         driver.findElement(By.cssSelector("#submit")).click();
+        Assertions.assertTrue(Methods.waitDialog(driver));
         String address = driver.findElement(By.xpath("//td[contains(text(),'Address')]/following::td[1]")).getText();
         Assertions.assertEquals(TestData.inputText, address);
     }
@@ -148,10 +157,10 @@ public class FormTests {
         String fileName = myFile.getName();
         driver.findElement(By.cssSelector("#uploadPicture")).sendKeys(path);
         driver.findElement(By.cssSelector("#submit")).click();
+        Assertions.assertTrue(Methods.waitDialog(driver));
         String observedName = driver.findElement(By.xpath("//td[contains(text(),'Picture')]/following::td[1]")).getText();
         Assertions.assertEquals(fileName, observedName);
     }
-
 
     @Test
     public void enablingCityListTest() {
@@ -168,6 +177,7 @@ public class FormTests {
         driver.findElement(By.xpath("//*[@id='city']//input")).sendKeys(TestData.city11);
         driver.findElement(By.xpath("//*[@id='city']//input")).sendKeys(Keys.RETURN);
         driver.findElement(By.cssSelector("#submit")).sendKeys(Keys.RETURN);
+        Assertions.assertTrue(Methods.waitDialog(driver));
         String observedStateCity = driver
                 .findElement(By.xpath("//td[contains(text(),'State and City')]/following::td[1]"))
                 .getText();
@@ -183,20 +193,24 @@ public class FormTests {
     @Test
     public void setNewDateTest() {
         driver.findElement(By.cssSelector("#dateOfBirthInput")).click();
+        Methods.letsWait(driver).until(ExpectedConditions.visibilityOf(driver
+                .findElement(By.xpath("//*[@class='react-datepicker']"))));
 
         WebElement elemYear = driver.findElement(By.xpath("//*[@class='react-datepicker__year-select']"));
         Select selectY = new Select(elemYear);
         selectY.selectByVisibleText(TestData.newYear);
 
         WebElement elemMonth = driver.findElement(By.xpath("//*[@class='react-datepicker__month-select']"));
-            Select selectM = new Select(elemMonth);
-            selectM.selectByVisibleText(TestData.newMonth);
-            System.out.println(Methods.combineXpath());
+        Select selectM = new Select(elemMonth);
+        selectM.selectByVisibleText(TestData.newMonth);
+        System.out.println(Methods.combineXpath());
 
         driver.findElement(By.xpath(Methods.combineXpath())).click();
 
         driver.findElement(By.cssSelector("#submit")).click();
-        String observedDate = driver.findElement(By.xpath("//td[contains(text(),'Date of Birth')]/following::td[1]")).getText();
+        Assertions.assertTrue(Methods.waitDialog(driver));
+        String observedDate = driver.
+                findElement(By.xpath("//td[contains(text(),'Date of Birth')]/following::td[1]")).getText();
         Assertions.assertEquals(TestData.newDay + " "+ TestData.newMonth + "," + TestData.newYear, observedDate);
     }
 

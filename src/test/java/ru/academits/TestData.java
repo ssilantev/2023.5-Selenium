@@ -1,5 +1,7 @@
 package ru.academits;
 
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 public class TestData {
 	static String name = "Ivan";
 	static String lastName = "Ivanov";
@@ -23,5 +25,6 @@ public class TestData {
 	static String newDay = "25";
 	static String newMonth = "April";
 	static String newYear = "1990";
+
 
 }
