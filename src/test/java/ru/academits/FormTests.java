@@ -13,9 +13,14 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
+
 public class FormTests {
 
     private static WebDriver driver;
+    static File myFile = new File(TestData.filePath);
+    static String fullPath = myFile.getAbsolutePath();
+    static String fileName = myFile.getName();
 
     @BeforeAll
     public static void setup() {
@@ -40,7 +45,7 @@ public class FormTests {
         driver.findElement(By.cssSelector("#lastName")).sendKeys(TestData.lastName);
         driver.findElement(By.cssSelector("#userEmail")).sendKeys(TestData.eMail);
 
-        driver.findElement(By.xpath("//label[contains(text(),'" + TestData.gender + "')]")).click(); //gender
+        driver.findElement(By.xpath("//label[contains(text(),'" + TestData.gender + "')]")).click();
 
         driver.findElement(By.cssSelector("#userNumber")).sendKeys(TestData.phone);
 
@@ -48,12 +53,12 @@ public class FormTests {
         driver.findElement(By.cssSelector("#dateOfBirthInput")).click();
 
         WebElement elemYear = driver.findElement(By.xpath("//*[@class='react-datepicker__year-select']"));
-        Select selectY = new Select(elemYear);
-        selectY.selectByVisibleText(TestData.newYear);
+        Select selectYear = new Select(elemYear);
+        selectYear.selectByVisibleText(TestData.newYear);
 
         WebElement elemMonth = driver.findElement(By.xpath("//*[@class='react-datepicker__month-select']"));
-        Select selectM = new Select(elemMonth);
-        selectM.selectByVisibleText(TestData.newMonth);
+        Select selectMonth = new Select(elemMonth);
+        selectMonth.selectByVisibleText(TestData.newMonth);
 
         driver.findElement(By.xpath("//*[contains(@aria-label,'" + TestData.newMonth + "')and(text()='" + TestData.newDay + "')]")).click();
         //date end
@@ -65,7 +70,7 @@ public class FormTests {
 
         driver.findElement(By.xpath("//label[contains(text(),'" + TestData.hobby + "')]")).click();
 
-        driver.findElement(By.cssSelector("#uploadPicture")).sendKeys(Methods.fullFilePath());
+        driver.findElement(By.cssSelector("#uploadPicture")).sendKeys(fullPath);
 
         driver.findElement(By.cssSelector("#currentAddress")).sendKeys(TestData.textSample);
 
@@ -81,60 +86,43 @@ public class FormTests {
     }
 
     @Test
-    public void submitTest() {
+    public void theWholeFormTest() {
+        // dialogDisplayed
         Assertions.assertTrue(driver.findElement(By.xpath("//*[@role='dialog']")).isDisplayed());
-    }
 
-    @Test
-    public void studentNameTest() {
+        // studentName
         String studentName = driver.findElement(By.xpath("//td[contains(text(),'Student Name')]/following::td[1]")).getText();
         Assertions.assertEquals(TestData.name + " " + TestData.lastName, studentName);
-    }
 
-    @Test
-    public void emailTest() {
+        // email
         String resultEmail = driver.findElement(By.xpath("//td[contains(text(),'Student Email')]/following::td[1]")).getText();
         Assertions.assertEquals(TestData.eMail, resultEmail);
-    }
 
-    @Test
-    public void genderTest() {
+        // gender
         String resultGender = driver.findElement(By.xpath("//td[contains(text(),'Gender')]/following::td[1]")).getText();
         Assertions.assertEquals(TestData.gender, resultGender);
-    }
 
-    @Test
-    public void mobileTest() {
+        // mobile
         String resultMobile = driver.findElement(By.xpath("//table//td[contains(text(),'Mobile')]/following::td[1]")).getText();
         Assertions.assertEquals(TestData.phone, resultMobile);
-    }
-    @Test
-    public void dateOfBirthTest() {
+
+        // dateOfBirth
         String resultDate = driver.findElement(By.xpath("//td[contains(text(),'Date of Birth')]/following::td[1]")).getText();
-        Assertions.assertEquals(TestData.newDay + " "+ TestData.newMonth + "," + TestData.newYear, resultDate);
-    }
+        Assertions.assertEquals(TestData.newDay + " " + TestData.newMonth + "," + TestData.newYear, resultDate);
 
-    @Test
-    public void subjectsTest() {
+        // subjects
         String resultSubjects = driver.findElement(By.xpath("//td[contains(text(),'Subjects')]/following::td[1]")).getText();
-        Assertions.assertEquals(TestData.subject1_full + ", "+ TestData.subject2_full, resultSubjects);
-    }
+        Assertions.assertEquals(TestData.subject1_full + ", " + TestData.subject2_full, resultSubjects);
 
-    @Test
-    public void hobbyTest() {
+        // hobby
         String resultHobby = driver.findElement(By.xpath("//td[contains(text(),'Hobbies')]/following::td[1]")).getText();
         Assertions.assertEquals(TestData.hobby, resultHobby);
-    }
 
-    @Test
-    public void addFileTest() {
-        String fileName = Methods.fileName();
+        // addFile
         String resultName = driver.findElement(By.xpath("//td[contains(text(),'Picture')]/following::td[1]")).getText();
         Assertions.assertEquals(fileName, resultName);
-    }
 
-    @Test
-    public void setStateCityTest() {
+        // stateAndCity
         String observedStateCity = driver
                 .findElement(By.xpath("//td[contains(text(),'State and City')]/following::td[1]"))
                 .getText();
